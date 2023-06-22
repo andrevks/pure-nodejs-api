@@ -1,0 +1,30 @@
+{
+  "name": "pure-nodejs-api",
+  "type": "module",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.mjs",
+  "scripts": {
+    "test": "vitest",
+    "dev": "node --watch src/server.mjs"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/andrevks/pure-nodejs-api.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/andrevks/pure-nodejs-api/issues"
+  },
+  "homepage": "https://github.com/andrevks/pure-nodejs-api#readme",
+  "devDependencies": {
+    "eslint": "^8.43.0",
+    "eslint-config-standard": "^17.1.0",
+    "eslint-plugin-import": "^2.27.5",
+    "eslint-plugin-n": "^16.0.0",
+    "eslint-plugin-promise": "^6.1.1",
+    "vitest": "^0.32.2"
+  }
+}
