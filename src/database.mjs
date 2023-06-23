@@ -6,7 +6,7 @@ export class Database {
   #base_path = ''
 
   constructor (path) {
-    this.#base_path = path || new URL('../db.json', import.meta.url)
+    this.#base_path = new URL(path || '../db.json', import.meta.url)
   }
 
   async boot () {
@@ -33,22 +33,38 @@ export class Database {
     await this.#persist()
   }
 
-  async select (table) {
-    return this.#database[table]
+  async select (table, search) {
+    let dataTable = this.#database[table] ?? []
+
+    if (search) {
+      // transformed object in {key:value} to [[key, value]]
+      Object.entries(search).forEach(([key, value]) => {
+        // filtered each table[key]
+        dataTable = this.#database[table].filter(tableRow => {
+          const cleanValue = value.toLowerCase().trim()
+          return tableRow[key].toLowerCase().includes(cleanValue)
+        })
+      })
+    }
+
+    return dataTable
   }
 
   async update (table, id, data) {
-    const rowIndexFound = this.database[table].findIndex(data => data.id === id)
-    if (rowIndexFound) {
-      this.database[table][rowIndexFound] = { ...data }
+    const rowIndexFound = this.#database[table].findIndex(data => data.id === id)
+    if (rowIndexFound > -1) {
+      this.#database[table][rowIndexFound] = { ...data, id }
+      await this.#persist()
     }
+    return { rowIndexFound, data }
   }
 
   async delete (table, id) {
-    const rowIndexFound = this.database[table].findIndex(data => data.id === id)
+    const rowIndexFound = this.#database[table].findIndex(data => data.id === id)
 
-    if (rowIndexFound) {
+    if (rowIndexFound > -1) {
       this.#database[table].splice(rowIndexFound, 1)
+      await this.#persist()
     }
   }
 }
