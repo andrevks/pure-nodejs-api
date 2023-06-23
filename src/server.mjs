@@ -1,16 +1,26 @@
 import http from 'node:http'
 import { routes } from './routes.mjs'
+import { jsonMiddleware } from './middlewares/json-middleware.mjs'
+import { extractQueryParams } from './utils/extract-query-params.mjs'
 
-const server = http.createServer((req, res) => {
+const server = http.createServer(async (req, res) => {
   const { method, url } = req
-  console.log(method, url)
+
+  await jsonMiddleware(req, res)
 
   const route = routes.find(route => {
-    return route.method === method && route.path === url
+    // console.log(route.path)
+    return route.method === method && route.path.test(url)
   })
 
   if (route) {
-    return res.end(`route "${route.path}" found.`)
+    const routeParams = url.match(route.path)
+    const { query, ...params } = { ...routeParams.groups }
+
+    req.params = params
+    req.query = query ? extractQueryParams(query) : {}
+
+    return route.handler(req, res)
   }
 
   res.writeHead(404).end()
