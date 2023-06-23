@@ -56,7 +56,6 @@ export class Database {
       this.#database[table][rowIndexFound] = { ...data, id }
       await this.#persist()
     }
-    return { rowIndexFound, data }
   }
 
   async delete (table, id) {
