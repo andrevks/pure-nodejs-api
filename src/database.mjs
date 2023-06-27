@@ -14,7 +14,6 @@ export class Database {
       const database = await readFile(this.#base_path)
       this.#database = JSON.parse(database)
     } catch (error) {
-      console.log(error)
       await this.#persist()
     }
   }
@@ -33,9 +32,8 @@ export class Database {
     await this.#persist()
   }
 
-  async select (table, search) {
+  select (table, search) {
     let dataTable = this.#database[table] ?? []
-
     if (search) {
       // transformed object in {key:value} to [[key, value]]
       Object.entries(search).forEach(([key, value]) => {

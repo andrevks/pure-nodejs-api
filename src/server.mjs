@@ -9,14 +9,12 @@ const server = http.createServer(async (req, res) => {
   await jsonMiddleware(req, res)
 
   const route = routes.find(route => {
-    // console.log(route.path)
     return route.method === method && route.path.test(url)
   })
 
   if (route) {
     const routeParams = url.match(route.path)
     const { query, ...params } = { ...routeParams.groups }
-
     req.params = params
     req.query = query ? extractQueryParams(query) : {}
 

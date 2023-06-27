@@ -8,8 +8,6 @@ export async function jsonMiddleware (req, res) {
     const requestBody = Buffer.concat(chunks)
     const parsedBody = JSON.parse(requestBody.toString())
     req.body = parsedBody
-
-    console.log(parsedBody)
   } catch (error) {
     req.body = null
   }

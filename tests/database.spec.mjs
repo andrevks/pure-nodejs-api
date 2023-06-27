@@ -7,6 +7,8 @@ import { randomUUID } from 'node:crypto'
 const setupDatabase = async () => {
   const databasePath = new URL('../db-test.json', import.meta.url)
   const sut = new Database(databasePath)
+  await sut.boot()
+
   const data = {
     id: randomUUID(),
     name: 'test',
@@ -18,7 +20,7 @@ const setupDatabase = async () => {
 const { sut, databasePath, table, data } = await setupDatabase()
 
 describe('database', async () => {
-  it('creating database and testing boot method', async () => {
+  it('should create database and call boot method', async () => {
     // clean file
     await writeFile(databasePath, JSON.stringify({}))
     const file = JSON.parse(await readFile(databasePath))
@@ -61,13 +63,13 @@ describe('database', async () => {
 
   it('select registry from table by filter and return empty array for not found registry ', async () => {
     /*
-      search: {
-        name: valueToBeSearched,
-        email: valueToBeSearched,
-      }
+        search: {
+          name: valueToBeSearched,
+          email: valueToBeSearched,
+        }
 
-      return array with only filtered data or just empty in case not found
-    */
+        return array with only filtered data or just empty in case not found
+      */
     const notFoundSearch = {
       name: 'not found registry',
       email: 'not-found@test.com'
@@ -80,12 +82,12 @@ describe('database', async () => {
 
   it('select registry from table by filter and return array with filtered data ', async () => {
     /*
-    search: {
-      name: valueToBeSearched,
-      email: valueToBeSearched,
-    }
-    return array with only filtered data or just empty in case not found
-    */
+      search: {
+        name: valueToBeSearched,
+        email: valueToBeSearched,
+      }
+      return array with only filtered data or just empty in case not found
+      */
     const newData = {
       id: randomUUID(),
       name: 'chuck',
