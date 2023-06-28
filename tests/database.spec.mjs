@@ -80,6 +80,24 @@ describe('database', async () => {
     expect(filteredData).toEqual([])
   })
 
+  it('select registry from by filter that does not have a property or property undefined ', async () => {
+    /*
+        search: {
+          name: valueToBeSearched,
+          email: valueToBeSearched,
+        }
+
+        return array with only filtered data or just empty in case not found
+      */
+    const notFoundSearch = {
+      title: 'new task',
+      description: undefined
+    }
+
+    const filteredData = await sut.select(table, notFoundSearch)
+    expect(filteredData).toEqual([])
+  })
+
   it('select registry from table by filter and return array with filtered data ', async () => {
     /*
       search: {

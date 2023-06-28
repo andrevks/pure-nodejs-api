@@ -39,6 +39,9 @@ export class Database {
       Object.entries(search).forEach(([key, value]) => {
         // filtered each table[key]
         dataTable = this.#database[table].filter(tableRow => {
+          if (!value || !tableRow[key]) {
+            return false
+          }
           const cleanValue = value.toLowerCase().trim()
           return tableRow[key].toLowerCase().includes(cleanValue)
         })

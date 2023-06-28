@@ -1,4 +1,4 @@
-export async function jsonMiddleware (req, res) {
+export const jsonMiddleware = async (req, res) => {
   try {
     const chunks = []
 
