@@ -115,42 +115,99 @@ describe('tasks resource', async () => {
     expect(taskUpdatedArray[0]).toMatchObject(taskToUpdate)
   })
 
-  it('should not update a task by id if the id is not in the db', async () => {
-    const taskUseCase = new TaskUseCase(database)
-    const oldTask = (await taskUseCase.list({
-      title: 'updated task'
-    }))[0]
+  it('should update one if only TITLE is sent, it means that description cannot be updated',
+    async () => {
+    // Arrange
+      const taskUseCase = new TaskUseCase(database)
 
-    const nonExistentTask = {
-      id: randomUUID(),
-      title: 'non existent task',
-      description: 'not existent descrition'
-    }
+      // Retrieve the old task with a specific title from the database
+      const oldTask = (await taskUseCase.list({
+        title: 'updated task'
+      }))[0]
 
-    const taskToUpdate = {
-      title: 'updated task 2',
-      description: 'updated description 2'
-    }
+      const updatedTitle = 'task To Update With Title'
 
-    const updatedTask = await taskUseCase.updateById(
-      taskToUpdate,
-      nonExistentTask.id
-    )
+      const taskToUpdate = {
+        title: updatedTitle
+      }
 
-    const taskUpdatedArray = await taskUseCase.list({
-      title: taskToUpdate.title
+      // Act
+      await taskUseCase.updateById(taskToUpdate, oldTask.id)
+
+      // Retrieve the updated task with the new title from the database
+      const updatedTask = await taskUseCase.list({
+        title: updatedTitle
+      })
+
+      // Assert
+      expect(oldTask.id).toEqual(updatedTask[0].id)
+      expect(oldTask.title).not.toEqual(updatedTask[0].title)
+      expect(oldTask.description).toEqual(updatedTask[0].description)
+
+      // Ensure that the title is updated correctly
+      expect(taskToUpdate.title).toEqual(updatedTask[0].title)
+
+      // Create the expected task with updated properties
+      const expectedTask = {
+        ...oldTask,
+        title: taskToUpdate.title,
+        updated_at: updatedTask[0].updated_at // Set the updated_at property to match the received object
+      }
+
+      // Verify that the updated task matches the expected task
+      expect(expectedTask).toMatchObject(updatedTask[0])
     })
 
-    expect(updatedTask).toThrowError()
-    expect(oldTask.id).toEqual(taskUpdatedArray[0].id)
-    expect(oldTask.title).toEqual(taskUpdatedArray[0].title)
-    expect(oldTask.description).toEqual(taskUpdatedArray[0].description)
+  it('should update one if only DESCRIPTION is sent, it means that title cannot be updated',
+    async () => {
+      // Arrange
+      const taskUseCase = new TaskUseCase(database)
 
-    expect(taskToUpdate.title).toEqual(taskUpdatedArray[0].title)
-    expect(taskToUpdate.description).toEqual(taskUpdatedArray[0].description)
+      const newTask = {
+        title: 'task to not alter description',
+        description: 'description to be altered'
+      }
 
-    expect(taskUpdatedArray[0]).toMatchObject(taskToUpdate)
-  })
+      // Create a new task to be updated
+      await taskUseCase.create(newTask)
+
+      // Retrieve the old task from the database
+      const oldTask = (await taskUseCase.list({
+        title: newTask.title
+      }))[0]
+
+      const updatedDescription = 'task with new description'
+
+      const taskToUpdate = {
+        description: updatedDescription
+      }
+
+      // Act
+      await taskUseCase.updateById(taskToUpdate, oldTask.id)
+
+      // Retrieve the updated task from the database
+      const updatedTask = (await taskUseCase.list({
+        description: updatedDescription
+      }))[0]
+
+      // Assert
+      expect(oldTask.id).toEqual(updatedTask.id)
+      expect(oldTask.title).toEqual(updatedTask.title)
+      expect(oldTask.description).not.toEqual(updatedTask.description)
+
+      // Ensure that the description is updated correctly
+      expect(taskToUpdate.description).toEqual(updatedTask.description)
+
+      // Create the expected task with updated properties
+      const expectedTask = {
+        ...oldTask,
+        description: taskToUpdate.description,
+        updated_at: updatedTask.updated_at // Set the updated_at property to match the received object
+      }
+
+      // Verify that the updated task matches the expected task
+      expect(expectedTask).toMatchObject(updatedTask)
+    })
 
   afterAll(async () => {
     await unlink(databasePath)

@@ -30,7 +30,6 @@ export class TaskUseCase {
 
   async list (searchParams) {
     const params = this.#getOnlyDefinedParams(searchParams)
-
     await this.#database.boot()
 
     const listedTaks = this.#database.select(this.#table, params)
@@ -45,9 +44,9 @@ export class TaskUseCase {
     const isTaskOnDb = await this.#getFirstByIdOrFail(id)
     await this.#database.update(this.#table, id, {
       ...isTaskOnDb,
-      title,
-      description,
-      update_at: new Date()
+      title: title || isTaskOnDb.title,
+      description: description || isTaskOnDb.description,
+      updated_at: new Date()
     })
 
     return isTaskOnDb
