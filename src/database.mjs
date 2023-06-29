@@ -19,7 +19,7 @@ export class Database {
   }
 
   async #persist () {
-    await writeFile(this.#base_path, JSON.stringify(this.#database))
+    await writeFile(this.#base_path, JSON.stringify(this.#database, null, 2))
   }
 
   async insert (table, data) {
@@ -39,11 +39,8 @@ export class Database {
       Object.entries(search).forEach(([key, value]) => {
         // filtered each table[key]
         dataTable = this.#database[table].filter(tableRow => {
-          if (!value || !tableRow[key]) {
-            return false
-          }
-          const cleanValue = value.toLowerCase().trim()
-          return tableRow[key].toLowerCase().includes(cleanValue)
+          const cleanValue = value?.toLowerCase().trim()
+          return tableRow[key]?.toLowerCase().includes(cleanValue)
         })
       })
     }
