@@ -52,6 +52,16 @@ export class TaskUseCase {
     return isTaskOnDb
   }
 
+  async deleteById (id) {
+    await this.#database.boot()
+
+    const isTaskOnDb = await this.#getFirstByIdOrFail(id)
+
+    await this.#database.delete(this.#table, id)
+
+    return isTaskOnDb
+  }
+
   #getOnlyDefinedParams (searchParams) {
     return Object.entries(searchParams || {})
       .reduce((acc, [key, value]) => {

@@ -209,6 +209,41 @@ describe('tasks resource', async () => {
       expect(expectedTask).toMatchObject(updatedTask)
     })
 
+  it('should delete a task by and check if exists before it ', async () => {
+    const taskUseCase = new TaskUseCase(database)
+    const oldTask = (await taskUseCase.list({
+      title: 'other'
+    }))[0]
+
+    await taskUseCase.deleteById(oldTask.id)
+
+    const taskDeleted = await taskUseCase.list({
+      id: oldTask.id
+    })
+
+    expect(taskDeleted).toEqual([])
+    expect(taskDeleted[0]).toBeUndefined()
+    expect()
+  })
+
+  it('should not delete a task if id does not exist ', async () => {
+    const taskUseCase = new TaskUseCase(database)
+    const nonExistentId = randomUUID()
+
+    const taskDeleted = await taskUseCase.list({
+      id: nonExistentId
+    })
+
+    // trying to delete by a non existent id
+    expect(async () => {
+      return await taskUseCase.deleteById(nonExistentId)
+    }).rejects.toThrowError('Task not found')
+
+    // it wont be founded
+    expect(taskDeleted).toEqual([])
+    expect(taskDeleted[0]).toBeUndefined()
+  })
+
   afterAll(async () => {
     await unlink(databasePath)
   })
