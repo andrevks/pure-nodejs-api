@@ -62,6 +62,19 @@ export class TaskUseCase {
     return isTaskOnDb
   }
 
+  async complete (id) {
+    await this.#database.boot()
+
+    const isTaskOnDb = await this.#getFirstByIdOrFail(id)
+
+    const completedAt = !isTaskOnDb.completed_at ? new Date() : null
+
+    await this.#database.update(this.#table, id, {
+      ...isTaskOnDb,
+      completed_at: completedAt
+    })
+  }
+
   #getOnlyDefinedParams (searchParams) {
     return Object.entries(searchParams || {})
       .reduce((acc, [key, value]) => {

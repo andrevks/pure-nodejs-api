@@ -244,6 +244,55 @@ describe('tasks resource', async () => {
     expect(taskDeleted[0]).toBeUndefined()
   })
 
+  it('should complete a task and verify if it exist first', async () => {
+    const taskUseCase = new TaskUseCase(database)
+    const uncompletedTask = {
+      title: 'uncompleted task',
+      description: 'uncompleted task description'
+    }
+    await taskUseCase.create(uncompletedTask)
+
+    let taskToBeCompleted = (await taskUseCase.list({
+      title: uncompletedTask.title
+    }))[0]
+
+    expect(taskToBeCompleted.completed_at).toBeNull()
+
+    // complete task
+    await taskUseCase.complete(taskToBeCompleted.id)
+
+    taskToBeCompleted = (await taskUseCase.list({
+      id: taskToBeCompleted.id
+    }))[0]
+
+    expect(taskToBeCompleted.completed_at).toMatch(
+      // 2023-06-30T00:28:50.151Z
+      /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/
+    )
+    expect(taskToBeCompleted.completed_at).toBeTruthy()
+
+    // unfinish task again
+    await taskUseCase.complete(taskToBeCompleted.id)
+
+    taskToBeCompleted = (await taskUseCase.list({
+      id: taskToBeCompleted.id
+    }))[0]
+
+    expect(taskToBeCompleted.completed_at).toBeNull()
+
+    // complete again
+    await taskUseCase.complete(taskToBeCompleted.id)
+
+    taskToBeCompleted = (await taskUseCase.list({
+      id: taskToBeCompleted.id
+    }))[0]
+
+    expect(taskToBeCompleted.completed_at).toMatch(
+      /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/
+    )
+    expect(taskToBeCompleted.completed_at).toBeTruthy()
+  })
+
   afterAll(async () => {
     await unlink(databasePath)
   })
