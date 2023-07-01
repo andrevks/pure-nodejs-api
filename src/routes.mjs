@@ -38,5 +38,66 @@ export const routes = [
 
       return res.writeHead(201).end()
     }
+  },
+  {
+    method: 'PUT',
+    path: buildRoutePath('/tasks/:id'),
+    handler: async (req, res) => {
+      try {
+        const { id } = req.params
+        const {
+          title,
+          description
+        } = req.body
+
+        if (!title && !description) {
+          return res.writeHead(400).end('title or description have to be sent')
+        }
+
+        const taskUseCase = new TaskUseCase(database)
+
+        await taskUseCase.updateById({
+          title,
+          description
+        }, id)
+
+        return res.writeHead(204).end()
+      } catch (error) {
+        return res.writeHead(404).end()
+      }
+    }
+  },
+  {
+    method: 'DELETE',
+    path: buildRoutePath('/tasks/:id'),
+    handler: async (req, res) => {
+      try {
+        const { id } = req.params
+
+        const taskUseCase = new TaskUseCase(database)
+
+        await taskUseCase.deleteById(id)
+
+        return res.writeHead(204).end()
+      } catch (error) {
+        return res.writeHead(404).end()
+      }
+    }
+  }, {
+    method: 'PATCH',
+    path: buildRoutePath('/tasks/:id'),
+    handler: async (req, res) => {
+      try {
+        const { id } = req.params
+
+        const taskUseCase = new TaskUseCase(database)
+
+        await taskUseCase.complete(id)
+
+        return res.writeHead(204).end()
+      } catch (error) {
+        return res.writeHead(404).end()
+      }
+    }
   }
 ]
