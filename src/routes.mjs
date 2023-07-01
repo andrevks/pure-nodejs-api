@@ -1,5 +1,5 @@
-import { randomUUID } from 'node:crypto'
 import { Database } from './database.mjs'
+import { TaskUseCase } from './use-cases/TaskUseCase.mjs'
 import { buildRoutePath } from './utils/build-route-path.mjs'
 const database = new Database()
 await database.boot()
@@ -7,59 +7,97 @@ await database.boot()
 export const routes = [
   {
     method: 'GET',
-    path: buildRoutePath('/users'),
+    path: buildRoutePath('/tasks'),
     handler: async (req, res) => {
-      const { search } = req.query
+      const taskUseCase = new TaskUseCase(database)
 
-      const searchParams = search
-        ? {
-            name: search,
-            email: search
-          }
-        : null
+      const taskList = await taskUseCase.list()
 
-      const users = database.select('users', searchParams)
-
-      return res.end(JSON.stringify(users))
+      res.end(JSON.stringify(taskList))
     }
   },
   {
     method: 'POST',
-    path: buildRoutePath('/users'),
+    path: buildRoutePath('/tasks'),
     handler: async (req, res) => {
-      const { name, email } = req.body
-      const id = randomUUID()
-      const user = { id, name, email }
+      const {
+        title,
+        description
+      } = req.body
 
-      await database.insert('users', user)
+      if (!title || !description) {
+        return res.writeHead(400).end('title or description have to be sent')
+      }
+
+      const taskUseCase = new TaskUseCase(database)
+
+      await taskUseCase.create({
+        title,
+        description
+      })
 
       return res.writeHead(201).end()
     }
   },
   {
     method: 'PUT',
-    path: buildRoutePath('/users/:id'),
+    path: buildRoutePath('/tasks/:id'),
     handler: async (req, res) => {
-      const { id } = req.params
-      const { name, email } = req.body
+      try {
+        const { id } = req.params
+        const {
+          title,
+          description
+        } = req.body
 
-      await database.update('users', id, {
-        name,
-        email
-      })
+        if (!title && !description) {
+          return res.writeHead(400).end('title or description have to be sent')
+        }
 
-      return res.writeHead(204).end()
+        const taskUseCase = new TaskUseCase(database)
+
+        await taskUseCase.updateById({
+          title,
+          description
+        }, id)
+
+        return res.writeHead(204).end()
+      } catch (error) {
+        return res.writeHead(404).end()
+      }
     }
   },
   {
     method: 'DELETE',
-    path: buildRoutePath('/users/:id'),
+    path: buildRoutePath('/tasks/:id'),
     handler: async (req, res) => {
-      const { id } = req.params
+      try {
+        const { id } = req.params
 
-      await database.delete('users', id)
+        const taskUseCase = new TaskUseCase(database)
 
-      return res.writeHead(204).end()
+        await taskUseCase.deleteById(id)
+
+        return res.writeHead(204).end()
+      } catch (error) {
+        return res.writeHead(404).end()
+      }
+    }
+  }, {
+    method: 'PATCH',
+    path: buildRoutePath('/tasks/:id'),
+    handler: async (req, res) => {
+      try {
+        const { id } = req.params
+
+        const taskUseCase = new TaskUseCase(database)
+
+        await taskUseCase.complete(id)
+
+        return res.writeHead(204).end()
+      } catch (error) {
+        return res.writeHead(404).end()
+      }
     }
   }
 ]
