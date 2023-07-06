@@ -26,5 +26,9 @@
     "eslint-plugin-n": "^16.0.0",
     "eslint-plugin-promise": "^6.1.1",
     "vitest": "^0.32.2"
+  },
+  "dependencies": {
+    "busboy": "^1.6.0",
+    "csv-parse": "^5.4.0"
   }
 }
