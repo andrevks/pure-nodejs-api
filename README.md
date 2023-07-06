@@ -10,7 +10,7 @@
   <a href="#-project-structure">Project Structure</a> •
   <a href="#-installation">Installation</a> •
   <a href="#-usage">Usage</a> •
-  <a href="#-testing">Testing</a> •
+  <a href="#-testing">Testing</a>
 </p>
 
 
