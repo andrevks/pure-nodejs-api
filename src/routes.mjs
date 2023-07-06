@@ -125,7 +125,7 @@ export const routes = [
           fileSize: 20 * 1024 * 1024, // Limit file size to 20 MB
           files: 1,
           fields: 1,
-          parts: 1
+          parts: 100
         }
       })
 
