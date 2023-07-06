@@ -16,9 +16,9 @@
 
 ## 📄 Project Overview
 
-This project is a comprehensive Node.js API implementation showcasing advanced skills in pure JavaScript development. It demonstrates expertise in building a robust API from scratch, utilizing Node.js HTTP server, regex, Test-Driven Development (TDD) approach, and file uploads using streams. 
+This project is a comprehensive Node.js API implementation showcasing intermediate skills in pure JavaScript development. It demonstrates expertise in building a API from scratch, utilizing Node.js HTTP server, regex, Test-Driven Development (TDD) approach, and file uploads using streams. 
 
-It's a RESTful API designed to manage tasks. It provides various endpoints to perform CRUD (Create, Read, Update, Delete) operations on tasks. The API is built using pure Node.js, leveraging streams for efficient file uploads and regex for specific functionality. It follows a Test-Driven Development approach, ensuring code quality and reliability.
+It's a RESTful API designed to manage tasks. It provides various endpoints to perform CRUD (Create, Read, Update, Delete) operations on tasks. The API is built using pure Node.js, leveraging streams for efficient file uploads and regex to match routes params and query strings. 
 
 ## ✨ Key Features
 
@@ -59,7 +59,7 @@ It's a RESTful API designed to manage tasks. It provides various endpoints to pe
 
 ## 🧪 Testing
 
-The project follows a Test-Driven Development (TDD) approach to ensure high code quality and reliability. Automated tests are implemented using the Vitest testing framework, which has a syntax similar to Jest. To run the tests, simply use the command npm test.
+Automated tests are implemented using the Vitest testing framework, which has a syntax similar to Jest. To run the tests, simply use the command npm test.
 
 ---
 
