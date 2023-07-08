@@ -186,10 +186,15 @@ export const routes = [
     path: buildRoutePath('/'),
     handler: async (req, res) => {
       try {
-        const welcomePage = await readFile('./src/resources/welcome.html', 'utf-8')
+        const currentFilePath = import.meta.url
+
+        const welcomeFilePath = new URL('./resources/welcome.html', currentFilePath)
+
+        const welcomePage = await readFile(welcomeFilePath, 'utf-8')
         res.writeHead(200, { 'Content-Type': 'text/html' }).end(welcomePage)
       } catch (error) {
         console.error(error)
+        res.writeHead(404).end('Welcome page not found')
       }
     }
   }
