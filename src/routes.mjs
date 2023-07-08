@@ -3,6 +3,8 @@ import { Database } from './database.mjs'
 import { jsonMiddleware } from './middlewares/json-middleware.mjs'
 import { TaskUseCase } from './use-cases/TaskUseCase.mjs'
 import { buildRoutePath } from './utils/build-route-path.mjs'
+import { readFile } from 'node:fs/promises'
+
 import busboy from 'busboy'
 const database = new Database()
 await database.boot()
@@ -177,6 +179,18 @@ export const routes = [
       // This begins the parsing of the form data.
       // All event listeners on Busboy should be set up before this line.
       req.pipe(busb)
+    }
+  },
+  {
+    method: 'GET',
+    path: buildRoutePath('/'),
+    handler: async (req, res) => {
+      try {
+        const welcomePage = await readFile('./src/resources/welcome.html', 'utf-8')
+        res.writeHead(200, { 'Content-Type': 'text/html' }).end(welcomePage)
+      } catch (error) {
+        console.error(error)
+      }
     }
   }
 ]
