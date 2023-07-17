@@ -32,7 +32,6 @@ It's a RESTful API designed to manage tasks. It provides various endpoints to pe
 
 - JavaScript
 - Node.js
-- Express.js
 - Busboy (for facilitating the parsing of multipart/form-data)
 - CSV Parser (for CSV file parsing)
 - Regex (for specific functionalities)
